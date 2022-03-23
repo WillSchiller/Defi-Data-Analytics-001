@@ -145,6 +145,20 @@ def make_tokens_index():
 # PUSH DATA TO DB # 
 # -----------------------------------------------
 
+def add(df, cols, t):
+    sio = StringIO()
+    writer = csv.writer(sio)
+    writer.writerows(df.values)
+    sio.seek(0)
+    with conn_local.cursor() as c:
+        c.copy_from(
+            file=sio,
+            table=t,
+            columns=cols,
+            sep=","
+        )
+        conn_local.commit()
+
 def add_tokens(df):
     sio = StringIO()
     writer = csv.writer(sio)
@@ -215,6 +229,15 @@ def build_sql(df,t):
                 values = values + f"('{row[1]}', '{row[2]}', {row[3]}, '{row[4]}', '{row[5]}', {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, {row[15]}, {row[16]}, {row[17]}, {row[18]}, {row[19]}, {row[20]}), "
             else:
                 values = values + f"('{row[1]}', '{row[2]}', {row[3]}, '{row[4]}', '{row[5]}', {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, {row[15]}, {row[16]}, {row[17]}, {row[18]}, {row[19]}, {row[20]})"
+    elif t == 'cmc_price':
+        #df = df.reset_index()
+        print(df)
+        for index, row in df.iterrows():
+            if index < rows - 1:
+                values = values + f"('{row[0]}', '{row[1]}', '{row[2]}', {row[3]}, {row[4]}, {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, '{row[15]}', {row[16]}, '{row[17]}'), "
+            else:
+                values = values + f"('{row[0]}', '{row[1]}', '{row[2]}', {row[3]}, {row[4]}, {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, '{row[15]}', {row[16]}, '{row[17]}')"
+
 
     else:
         for index, row in df.iterrows():
@@ -245,15 +268,18 @@ def add_metrics(df, t):
 def add_metrics_local(df, t):
     print("adding metrics")
     values = build_sql(df,t)
+    print(values)
     sql = ''
     if t =='tweetvolumescleaned':
         sql = f"INSERT INTO {t}(id, timezone, timestamp, date, symbol, count, sentiment) VALUES{values} ON CONFLICT (id) DO NOTHING"
     elif t == 'rsd_metrics':
         sql = f"INSERT INTO {t}(id, timezone, timestamp, date, symbol, count, symbol_sma1, symbol_sma1_previous, symbol_sma7, symbol_sma7_previous, symbol_sma14, sma1_dif, sma7_dif, sma14_dif, sentiment, sentiment_sma1, sentiment_sma7, rsd_1, rsd_7, rsd_14) VALUES{values} ON CONFLICT (id) DO NOTHING"
+    elif t == 'cmc_price':
+        sql = f"INSERT INTO {t}(source, symbol, slug, max_supply, circulating_supply, total_supply, price, volume_24h, volume_change_24h, percent_change_1h, percent_change_24h, percent_change_7d, market_cap, market_cap_dominance, fully_diluted_market_cap, last_updated, timestamp, id) VALUES{values} ON CONFLICT (id) DO NOTHING"
     else:
         sql = f"INSERT INTO {t}(usd, usd_market_cap, usd_24h_vol, usd_24h_change, last_updated_at, symbol, id) VALUES{values} ON CONFLICT (id) DO NOTHING"
 
-        
+
     #print(sql)
     try:
         cursor_local.execute(sql)
