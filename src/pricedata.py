@@ -115,11 +115,6 @@ cols = [ "source",
         "id" ]
 
 
-
-def make_df(data):
-    df = pd.DataFrame(data).fillna(0)
-    print(df)
-    df['last_updated'] = pd.to_datetime(df['last_updated']).dt.strftime('%Y-%m-%dT%H:%M.%fZ')
  
 def make_df(data):
     df = pd.DataFrame(data).fillna(0)
