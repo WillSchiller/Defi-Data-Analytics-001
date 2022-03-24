@@ -114,7 +114,6 @@ cols = [ "source",
         "timestamp",
         "id" ]
 
-
  
 def make_df(data):
     df = pd.DataFrame(data).fillna(0)
@@ -130,8 +129,8 @@ def make_df(data):
 
 
 if __name__ == '__main__':
-    db.drop_table('cmc_price')
-    db.create_table(cmc_price)
+    #db.drop_table('cmc_price')
+    #db.create_table(cmc_price)
     data = getpairs()
     df = make_df(data)
     db.add_metrics_local(df, "cmc_price")

@@ -210,7 +210,6 @@ def add_all(df):
 
 def build_sql(df,t):
     rows = len(df.index)
-    print(rows)
     values = ""
     if t == 'tweetvolumescleaned':
 

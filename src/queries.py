@@ -7,6 +7,7 @@ import time
 import numpy as np
 from dotenv import load_dotenv
 import os
+import sql
 
 load_dotenv()
 
@@ -51,7 +52,18 @@ def runQuery(params):
     
     df = pd.read_sql_query(get ,conn_local)
     add_all(df, table_name, cols)
+
+
+#Just for testing
+def returnSQL(sql):
+    cursor_local.execute(sql)
+    d = cursor_local.fetchall()
+    return d
+
+
     
+
+
 
 def add_all(df, table_name, cols):
     sio = StringIO()
@@ -70,8 +82,11 @@ def add_all(df, table_name, cols):
     
 
 if __name__ == '__main__':
-    runQuery(tweet_trend)
-    runQuery(trending)
-    runQuery(volatile)
-    runQuery(descreasing)
-    runQuery(token_stats)
+    d = returnSQL(sql.trending_price)
+    for i in d:
+        print(i)
+    #runQuery(tweet_trend)
+    #runQuery(trending)
+    #runQuery(volatile)
+    #runQuery(descreasing)
+    #runQuery(token_stats)
