@@ -26,6 +26,7 @@ cursor_local = conn_local.cursor()
 
 
 # SQL queries  
+
 tweet_trend =  ("SELECT DATE_TRUNC('day', date) AS date, sum(count) AS tweets FROM rsd_metrics WHERE symbol != 'NOT_A_SYMBOL' GROUP BY 1 ORDER BY date ASC", "CREATE TABLE IF NOT EXISTS tweet_trend(date TIMESTAMP, tweets FLOAT8)", "tweet_trend", ["date", "tweets"])
 trending = ("SELECT * FROM rsd_metrics WHERE symbol != 'NOT_A_SYMBOL' AND timestamp >= (SELECT MAX(timestamp) FROM rsd_metrics) AND count >= 100 ORDER BY sma1_dif DESC LIMIT 10", "CREATE TABLE IF NOT EXISTS trending(id text PRIMARY KEY, timezone text, timestamp INTEGER, date TIMESTAMP, symbol text, count FLOAT8, symbol_sma1 FLOAT8, symbol_sma1_previous FLOAT8, symbol_sma7 FLOAT8, symbol_sma7_previous FLOAT8, symbol_sma14 FLOAT8, sma1_dif FLOAT8, sma7_dif FLOAT8, sma14_dif FLOAT8, sentiment FLOAT8, sentiment_sma1 FLOAT8, sentiment_sma7 FLOAT8, rsd_1 FLOAT8, rsd_7 FLOAT8, rsd_14 FLOAT8)", "trending", ["id", "timezone", "timestamp", "date", "symbol", "count", "symbol_sma1", "symbol_sma1_previous", "symbol_sma7", "symbol_sma7_previous", "symbol_sma14", "sma1_dif", "sma7_dif", "sma14_dif", "sentiment", "sentiment_sma1", "sentiment_sma7", "rsd_1", "rsd_7", "rsd_14"])
 volatile = ("SELECT * FROM rsd_metrics WHERE symbol != 'NOT_A_SYMBOL' AND timestamp >= (SELECT MAX(timestamp) FROM rsd_metrics) AND count >= 100 ORDER BY rsd_7 DESC LIMIT 10",  "CREATE TABLE IF NOT EXISTS volatile(id text PRIMARY KEY, timezone text, timestamp INTEGER, date TIMESTAMP, symbol text, count FLOAT8, symbol_sma1 FLOAT8, symbol_sma1_previous FLOAT8, symbol_sma7 FLOAT8, symbol_sma7_previous FLOAT8, symbol_sma14 FLOAT8, sma1_dif FLOAT8, sma7_dif FLOAT8, sma14_dif FLOAT8, sentiment FLOAT8, sentiment_sma1 FLOAT8, sentiment_sma7 FLOAT8, rsd_1 FLOAT8, rsd_7 FLOAT8, rsd_14 FLOAT8)", "volatile", ["id", "timezone", "timestamp", "date", "symbol", "count", "symbol_sma1", "symbol_sma1_previous", "symbol_sma7", "symbol_sma7_previous", "symbol_sma14", "sma1_dif", "sma7_dif", "sma14_dif", "sentiment", "sentiment_sma1", "sentiment_sma7", "rsd_1", "rsd_7", "rsd_14"])
@@ -61,9 +62,6 @@ def returnSQL(sql):
     return d
 
 
-    
-
-
 
 def add_all(df, table_name, cols):
     sio = StringIO()
@@ -82,11 +80,13 @@ def add_all(df, table_name, cols):
     
 
 if __name__ == '__main__':
-    d = returnSQL(sql.trending_price)
-    for i in d:
-        print(i)
-    #runQuery(tweet_trend)
+
+    runQuery(sql.create_sql("trending"))
+    runQuery(sql.create_sql("volatile"))
+    runQuery(sql.create_sql("descreasing"))
+
+    runQuery(tweet_trend)
     #runQuery(trending)
     #runQuery(volatile)
     #runQuery(descreasing)
-    #runQuery(token_stats)
+    runQuery(token_stats)
