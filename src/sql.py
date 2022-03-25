@@ -73,8 +73,8 @@ def create_sql(table):
             Top_10.sentiment as sentiment,
             Top_10.rsd_1 as rsd_1,
             Top_10.rsd_7 as rsd_7,
-            LATEST_PRICES.price as price,
-            LATEST_PRICES.percent_change_24h as percent_change_24h
+            coalesce(LATEST_PRICES.price, 0) as price,
+            coalesce(LATEST_PRICES.percent_change_24h, 0) as percent_change_24h
         FROM
             Top_10
         LEFT JOIN 
