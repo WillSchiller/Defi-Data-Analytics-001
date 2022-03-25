@@ -1,4 +1,4 @@
-# ------------ SQL QUERIES FOR queries.py ------------------ # 
+# ------------ SQL QUERIES FOR queries.py ------------------- # 
 
 def orderby(table):
     if table == 'trending':
