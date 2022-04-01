@@ -60,7 +60,7 @@ def create_sql(table):
 
     JOIN_DATA AS (
         SELECT
-            Top_10.id as id,
+            CONCAT(Top_10.id, '-', LATEST_PRICES.slug) as id,
             Top_10.timestamp as timestamp,
             Top_10.date as date, 
             Top_10.symbol as symbol,

@@ -52,6 +52,7 @@ def runQuery(params):
         print(f"COULD NOT CREATE TABLE: {e}")
     
     df = pd.read_sql_query(get ,conn_local)
+    #print(df)
     add_all(df, table_name, cols)
 
 
