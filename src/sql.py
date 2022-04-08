@@ -35,7 +35,6 @@ def create_sql(table):
     PRICE_DATA AS ( 
         SELECT 
             symbol,
-            slug,
             price,
             percent_change_24h,
             timestamp 
@@ -46,7 +45,7 @@ def create_sql(table):
     RANKED_PRICE AS (
         SELECT 
             *,
-            RANK() OVER (PARTITION BY symbol, slug ORDER BY timestamp DESC, price DESC, percent_change_24h DESC) AS latest
+            RANK() OVER (PARTITION BY symbol ORDER BY timestamp DESC, price DESC, percent_change_24h DESC) AS latest
         FROM
             PRICE_DATA
         ),			
@@ -60,11 +59,10 @@ def create_sql(table):
 
     JOIN_DATA AS (
         SELECT
-            CONCAT(Top_10.id, '-', LATEST_PRICES.slug) as id,
+            Top_10.id as id,
             Top_10.timestamp as timestamp,
             Top_10.date as date, 
             Top_10.symbol as symbol,
-            LATEST_PRICES.slug as slug,
             Top_10.count as count,
             Top_10.symbol_sma1 as symbol_sma1,
             Top_10.sma1_dif as sma1_dif,
@@ -83,6 +81,7 @@ def create_sql(table):
             Top_10.symbol = LATEST_PRICES.symbol
     )
     SELECT * FROM JOIN_DATA 
+    ORDER BY {order_by}
     '''
 
     sql_create =f'''
@@ -91,7 +90,6 @@ def create_sql(table):
         timestamp INTEGER, 
         date TIMESTAMP, 
         symbol text,
-        slug text,  
         count FLOAT8, 
         symbol_sma1 FLOAT8,
         sma1_dif FLOAT8, 
@@ -105,7 +103,7 @@ def create_sql(table):
         )
     '''
 
-    cols = ["id", "timestamp", "date", "symbol", "slug", "count", "symbol_sma1", "sma1_dif", "symbol_sma7", "sma7_dif", "sentiment", "rsd_1", "rsd_7", "price", "percent_change_24h"]
+    cols = ["id", "timestamp", "date", "symbol", "count", "symbol_sma1", "sma1_dif", "symbol_sma7", "sma7_dif", "sentiment", "rsd_1", "rsd_7", "price", "percent_change_24h"]
 
     return (sql_get, sql_create, table, cols)
 
