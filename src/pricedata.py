@@ -77,18 +77,18 @@ cmc_price ='''
         source TEXT,
         symbol TEXT,
         slug TEXT, 
-        max_supply BIGINT,
-        circulating_supply BIGINT,
-        total_supply BIGINT,
+        max_supply text,
+        circulating_supply TEXT,
+        total_supply TEXT,
         price DECIMAL,
-        volume_24h DECIMAL,
-        volume_change_24h DECIMAL,
+        volume_24h TEXT,
+        volume_change_24h text,
         percent_change_1h DECIMAL,
         percent_change_24h DECIMAL,
         percent_change_7d DECIMAL,
-        market_cap DECIMAL,
+        market_cap text,
         market_cap_dominance DECIMAL,
-        fully_diluted_market_cap DECIMAL,
+        fully_diluted_market_cap text,
         last_updated TIMESTAMP,
         timestamp Integer
         
@@ -129,8 +129,8 @@ def make_df(data):
 
 
 if __name__ == '__main__':
-    #db.drop_table('cmc_price')
-    #db.create_table(cmc_price)
+    db.drop_table('cmc_price')
+    db.create_table(cmc_price)
     data = getpairs()
     df = make_df(data)
     db.add_metrics_local(df, "cmc_price")

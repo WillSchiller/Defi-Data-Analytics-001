@@ -267,7 +267,7 @@ def add_metrics(df, t):
 def add_metrics_local(df, t):
     print("adding metrics")
     values = build_sql(df,t)
-    print(values)
+
     sql = ''
     if t =='tweetvolumescleaned':
         sql = f"INSERT INTO {t}(id, timezone, timestamp, date, symbol, count, sentiment) VALUES{values} ON CONFLICT (id) DO NOTHING"
